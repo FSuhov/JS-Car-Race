@@ -1,0 +1,185 @@
+<!doctype html>
+
+<html>
+	<head>
+		<title>Page Title</title>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="initial-scale=1.0">
+		<style>
+            body{
+                width:100%;
+                margin:0;
+            }
+            header{
+                background-color: blue;
+                width:100%;
+                height:150px;
+                color:yellow;
+                padding: 10px;               
+                text-align: center;
+                overflow: hidden; 
+            }
+             header p{
+                text-align: center;
+                font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+                font-size: 1em; 
+            }
+            button{
+                display: block;
+                margin:0 auto;
+                width:150px;
+                height:60px;
+                background-color: orange;
+                font-family:"Comic Sans MS", cursive, sans-serif;
+                font-size: 1.5em;
+                color:white;
+            }
+            
+            #road1{
+                background-image: url(IMAGES/road1.jpg);
+                height:200px;
+                
+            }
+            #road2{
+                background-image: url(IMAGES/road2.jpg);
+                height:200px;                
+            }
+            #road3{
+                background-image: url(IMAGES/road3.jpg);
+                height:200px;
+            }
+            img{
+                position: relative;
+                top:120px;
+            }
+        </style>
+	</head>
+
+	<body>
+	<header>
+	    <p>Написать скрипт, который позволяет анимировать движение автомобиля.
+На странице html разместить картинку с изображением автомобиля и кнопка 
+с текстом Run.
+При нажатии по кнопке автомобиль начинает движение с лева на право.
+Достигнув правого края браузера автомобиль разворачивается и начинает
+движение в обратном направлении.
+
+Во время движения машины текст кнопки меняется на Stop.
+
+Движение автомобиля продолжается до тех пор, пока пользователь на нажмет
+кнопку Stop (при её этом текст меняется на Run).
+
+Повторное нажатие кнопки Run возобновляет движение автомобиля с остановленной
+позиции.
+</p>
+	</header>
+	<br/>
+	<div id="road1"></div>
+	<div id="road2"></div>
+	<div id="road3"></div>
+<!--
+	<img src="IMAGES/car_right.jpg" alt="right" width="150px"/>
+	<img src="IMAGES/car_right2.jpg" alt="right" width="150px"/>
+	<img src="IMAGES/car_right3.jpg" alt="right" width="150px"/>
+-->
+	<br/><br/>
+	<button>DRIVE</button>
+	
+	<script>            
+        (function(){
+            function Car(img_car, img_right, img_left, id){
+                var newImg = document.createElement("img");
+                newImg.src = img_car;
+                newImg.setAttribute("width", "150px");
+                newImg.setAttribute("marginLeft", "0px");
+                var btn = document.querySelector("button");
+                document.body.insertBefore(newImg, btn);
+                var divToInsertIn = document.querySelector("#road"+id);
+                divToInsertIn.appendChild(newImg);
+                this.imgRight = img_right;
+                this.imgLeft = img_left;
+                this.margin = 0;
+                this.speed = 5;
+                this.toRight = true;
+                this.id = id;
+                this.distancePassed = 0;
+                this.Drive =  function(){
+                    if(this.margin+this.speed<=document.body.clientWidth-newImg.width&&this.toRight){
+                        this.speed = this.speed+Math.floor(Math.random()*5);
+                        this.margin=this.margin+this.speed;
+                        newImg.style.marginLeft = this.margin+"px";
+                        newImg.src = this.imgRight;
+                        this.distancePassed += this.speed;
+                        this.speed = 5;
+                    }
+                    else{
+                        this.toRight=false;
+                        this.speed = this.speed+Math.floor(Math.random()*5);
+                        this.margin=this.margin-this.speed;
+                        newImg.style.marginLeft = this.margin+"px";
+                        newImg.src = this.imgLeft;
+                        if(this.margin<=this.speed){
+                            this.toRight=true;
+                        }
+                        this.distancePassed += this.speed;
+                        this.speed = 5;
+                    }
+                }.bind(this);
+                
+            }
+            
+            var imgList = document.getElementsByTagName("img");
+            let car1 = new Car("IMAGES/car_right.png", "IMAGES/car_right.png", "IMAGES/car_left.png", "1");
+            let car2 = new Car("IMAGES/car_right2.png", "IMAGES/car_right2.png", "IMAGES/car_left2.png", "2");
+            let car3 = new Car("IMAGES/car_right3.png", "IMAGES/car_right3.png", "IMAGES/car_left3.png", "3");
+            let carList = [];
+            carList.push(car1);
+            carList.push(car2);
+            carList.push(car3);
+            
+           
+            
+            var btn = document.querySelector("button");
+            var t1,t2,t3;
+            var tList = [];
+            tList.push(t1);
+            tList.push(t2);
+            tList.push(t3);
+            
+            btn.onclick = function(){
+                if(btn.innerHTML == "DRIVE"){
+                    btn.innerHTML = "STOP";
+                    for(let i = 0; i < carList.length; i++){
+                        t1=tList[i]=setInterval(carList[i].Drive,10);
+                    }
+                    
+                    
+                }
+                else{
+                    btn.innerHTML = "DRIVE";
+                    for(let i = 0; i < carList.length; i++){
+                        clearInterval(tList[i]);
+                    }
+                    let winner;
+                    let distance = 0;
+                    for(let i = 0; i < carList.length; i++){
+                        if(carList[i].distancePassed > distance){
+                            distance = carList[i].distancePassed;
+                            winner = carList[i];
+                        }
+                    }
+                    alert("Побеждает машина № "+winner.id+". Она прошла " + winner.distancePassed + " метров");
+                    
+                }
+            }
+         
+            
+            
+            
+
+            
+        })();
+    </script>
+
+	</body>
+</html>
